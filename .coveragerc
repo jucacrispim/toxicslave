@@ -1,0 +1,3 @@
+[run]
+branch=True
+omit=toxicslave/__init__.py,toxicslave/cmds.py

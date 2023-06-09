@@ -1,0 +1,39 @@
+[build-system]
+requires = [
+    "setuptools >= 65",
+    "wheel >= 0.38",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "toxicslave"
+dynamic = ["version"]
+authors = [
+  { name="me@myself.com" },
+]
+description = "toxicslave: My super cool project"
+readme = "README.md"
+
+dependencies = [
+    'toxicbuild-core==0.10.0',
+]
+
+classifiers = [
+    'Development Status :: 3 - Alpha',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: GNU General Public License (GPL)',
+    'Natural Language :: English',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python :: 3',
+    'License :: OSI Approved :: GNU General Public License v3 (GPLv3)'
+
+]
+
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["tests*"]
+include = ["toxicslave"]
+
+[tool.setuptools.dynamic]
+version = {attr = "toxicslave.__version__"}
