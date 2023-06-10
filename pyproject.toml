@@ -11,7 +11,7 @@ dynamic = ["version"]
 authors = [
   { name="me@myself.com" },
 ]
-description = "toxicslave: My super cool project"
+description = "toxicslave: build server for toxicbuild"
 readme = "README.md"
 
 dependencies = [
@@ -29,6 +29,8 @@ classifiers = [
 
 ]
 
+[project.urls]
+"Homepage" = "https://docs.poraodjuca.dev/toxiccore/index.html"
 
 [tool.setuptools.packages.find]
 where = ["."]
