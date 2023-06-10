@@ -39,3 +39,6 @@ include = ["toxicslave"]
 
 [tool.setuptools.dynamic]
 version = {attr = "toxicslave.__version__"}
+
+[project.scripts]
+toxicslave = "toxicslave.cmds:main"
