@@ -185,6 +185,7 @@ class DockerContainerBuilder(Builder):
             vol_name) if self._is_dind and self._dind_volume else ''
 
         dind_opts = '{} {}'.format(privileged, volume)
+        self.log(f'dind opts: {dind_opts}', level='debug')
         return dind_opts
 
     async def start_container(self):
