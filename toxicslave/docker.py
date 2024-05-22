@@ -73,7 +73,7 @@ class DockerContainerBuilder(Builder):
     def _get_name(self, name, workdir, platform):
         name = '{}-{}-{}'.format(
             workdir.replace('/', '-').replace('\\', '-'),
-            platform, name)
+            platform, name.replace(' ', '-').replace('&', ''))
         return name
 
     async def __aenter__(self):
