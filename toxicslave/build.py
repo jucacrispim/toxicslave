@@ -277,7 +277,7 @@ class BuildStep:
         :param stop_on_fail: If True and the step fails the build will stop.
         """
         self.name = name
-        self.command = command
+        self.command = command.strip(' ')
         self.warning_on_fail = warning_on_fail
         self.timeout = timeout
         self.stop_on_fail = stop_on_fail

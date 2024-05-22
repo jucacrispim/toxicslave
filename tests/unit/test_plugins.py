@@ -97,7 +97,20 @@ class PythonVenvPluginTest(TestCase):
         ]
 
         steps_before = self.plugin.get_steps_before()
+        self.assertEqual(expected, steps_before)
 
+    def test_get_steps_before_with_extra_indexes(self):
+        cmd = 'mkdir -p .././python-venv && /usr/bin/python3.4 -m venv'
+        cmd += ' .././python-venv/venv-usrbinpython3.4'
+        expected = [
+            plugins.BuildStep('create venv', cmd),
+            plugins.BuildStep(
+                'install dependencies using pip',
+                f'{self.plugin.pip_command} install -r requirements.txt'
+                ' --extra-index-url=https://a.pypi.url')
+        ]
+        self.plugin.extra_indexes = ['https://a.pypi.url']
+        steps_before = self.plugin.get_steps_before()
         self.assertEqual(expected, steps_before)
 
     def test_get_steps_after_without_remove(self):

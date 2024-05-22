@@ -103,12 +103,13 @@ class PythonVenvPlugin(SlavePlugin):
     name = 'python-venv'
 
     def __init__(self, pyversion, requirements_file='requirements.txt',
-                 remove_env=False):
+                 remove_env=False, extra_indexes=None):
         super().__init__()
         self.pyversion = pyversion
         self.requirements_file = requirements_file
         self.remove_env = remove_env
         self.pip_command = 'pip'
+        self.extra_indexes = extra_indexes or []
 
     @property
     def venv_dir(self):
@@ -120,10 +121,14 @@ class PythonVenvPlugin(SlavePlugin):
         create_env = PythonCreateVenvStep(self.data_dir,
                                           self.venv_dir, self.pyversion)
 
+        extra_indexes = ''
+        for i in self.extra_indexes:
+            extra_indexes += f'--extra-index-url={i} '
         install_deps = BuildStep('install dependencies using pip',
-                                 '{} install -r {}'.format(
+                                 '{} install -r {} {}'.format(
                                      self.pip_command,
-                                     self.requirements_file),
+                                     self.requirements_file,
+                                     extra_indexes),
                                  stop_on_fail=True)
 
         return [create_env, install_deps]
