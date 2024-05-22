@@ -120,12 +120,12 @@ class DockerContainerBuilder(Builder):
         msg = 'Executing {}'.format(cmd)
         self.log(msg, level='debug')
         try:
-            await exec_cmd(cmd, cwd='.')
+            ret = await exec_cmd(cmd, cwd='.')
         except ExecCmdError:
             r = False
 
         else:
-            r = True
+            r = int(ret) > 1
 
         return r
 

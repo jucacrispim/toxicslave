@@ -116,6 +116,12 @@ class DockerContainerBuilderManagerTest(TestCase):
     @patch.object(docker, 'exec_cmd',
                   AsyncMock(side_effect=docker.ExecCmdError))
     @async_test
+    async def test_container_exisits_do_not_exist_error(self):
+        exists = await self.container.container_exists()
+        self.assertFalse(exists)
+
+    @patch.object(docker, 'exec_cmd', AsyncMock(return_value='1'))
+    @async_test
     async def test_container_exisits_do_not_exist(self):
         exists = await self.container.container_exists()
         self.assertFalse(exists)
