@@ -34,7 +34,8 @@
 
 import asyncio
 import os
-from toxiccore.utils import (exec_cmd, interpolate_dict_values,
+from toxiccore.shell import exec_cmd, ExecCmdError
+from toxiccore.utils import (interpolate_dict_values,
                              LoggerMixin)
 from . import settings
 from .build import BuildStep, Builder
@@ -118,8 +119,15 @@ class DockerContainerBuilder(Builder):
         cmd += '| wc -l'
         msg = 'Executing {}'.format(cmd)
         self.log(msg, level='debug')
-        ret = await exec_cmd(cmd, cwd='.')
-        return int(ret) > 1
+        try:
+            await exec_cmd(cmd, cwd='.')
+        except ExecCmdError:
+            r = False
+
+        else:
+            r = True
+
+        return r
 
     async def is_running(self):
         is_running = await self.container_exists(only_running=True)

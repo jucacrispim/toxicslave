@@ -4,7 +4,7 @@
 
 from toxiccore.conf import Settings
 
-__version__ = '0.10.0'
+__version__ = '0.10.1'
 
 ENVVAR = 'TOXICSLAVE_SETTINGS'
 DEFAULT_SETTINGS = 'toxicslave.conf'
