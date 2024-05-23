@@ -15,7 +15,7 @@ description = "toxicslave: build server for toxicbuild"
 readme = "README.md"
 
 dependencies = [
-    'toxicbuild-core==0.10.0',
+    'toxiccore==0.11.0',
 ]
 
 classifiers = [
