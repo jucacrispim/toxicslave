@@ -3,6 +3,8 @@ language: python
 versions:
   - '3.11'
 
+extra_indexes:
+  - 'https://pypi.poraodojuca.dev'
 
 system_packages:
   - procps
