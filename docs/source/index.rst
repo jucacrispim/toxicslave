@@ -13,7 +13,7 @@ To install it use pip:
 
 .. code-block:: sh
 
-   $ pip install toxicslave
+   $ pip install toxicslave --extra-index-url=https://pypi.poraodojuca.dev
 
 
 .. note::
