@@ -270,7 +270,7 @@ class DockerContainerBuilderManagerTest(TestCase):
     @patch.object(docker, 'exec_cmd', AsyncMock())
     @async_test
     async def test_rm_container(self):
-        expected = 'docker rm {}'.format(self.container.cname)
+        expected = 'docker rm -v {}'.format(self.container.cname)
         await self.container.rm_container()
         called = docker.exec_cmd.call_args[0][0]
         self.assertEqual(expected, called)

@@ -1,6 +1,10 @@
 Changelog
 =========
 
+* v0.12.0
+
+  - Remove docker volumes after the build is done
+
 * v0.11.0
 
   - Add extra_indexes to python plugin

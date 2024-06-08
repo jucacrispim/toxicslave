@@ -21,16 +21,6 @@
 # mapped in the settings file) and each time we run a build we run a
 # container based in one of these images.
 
-# !!!!!!!!!!!!!!
-# The oddest part is that when the container is done we `docker cp` - this is
-# why the silly CONTAINER_SLAVE_WORKDIR settings variable exists - the
-# source code to the container instead of creating an image with the source
-# code.
-
-# This is odd, but there is a reason for that. The files are
-# copied to the container instead of create a container with the files
-# because I want to have the option to preserve the environment for future
-# builds.
 
 import asyncio
 import os
@@ -225,7 +215,7 @@ class DockerContainerBuilder(Builder):
     async def rm_container(self):
         msg = 'Removing container {}'.format(self.cname)
         self.log(msg, level='debug')
-        cmd = '{} rm {}'.format(self.docker_cmd, self.cname)
+        cmd = '{} rm -v {}'.format(self.docker_cmd, self.cname)
         self.log(cmd, level='debug')
         await exec_cmd(cmd, cwd='.')
 
