@@ -1,6 +1,11 @@
 Changelog
 =========
 
+
+* v0.12.1
+
+  - Update toxiccore to rebase when pulling changes from remote repo
+
 * v0.12.0
 
   - Remove docker volumes after the build is done
