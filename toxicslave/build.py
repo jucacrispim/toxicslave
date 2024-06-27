@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2015-2019, 2023 Juca Crispim <juca@poraodojuca.net>
+# Copyright 2015-2019, 2023, 2024 Juca Crispim <juca@poraodojuca.dev>
 
 # This file is part of toxicbuild.
 
@@ -32,7 +32,7 @@ from .exceptions import BadPluginConfig
 class Builder(LoggerMixin):
 
     """ A builder executes build steps. Builders are configured in
-    the toxicbuild.conf file
+    the toxicbuild.yml file
     """
 
     STEP_OUTPUT_BUFF_LEN = 0
@@ -43,7 +43,7 @@ class Builder(LoggerMixin):
         """:param manager: instance of :class:`toxicbuild.slave.BuildManager`.
         :param bconf: A dictionary with the builder configuration.
         :param workdir: directory where the steps will be executed.
-        :param: platform: When the builder execute is builds.
+        :param: platform: Where the builder execute its builds.
         :param remove_env: Indicates if the build environment should be
           removed when the build is done.
         :param envvars: Environment variables to be used on the steps.
@@ -51,6 +51,7 @@ class Builder(LoggerMixin):
         self.manager = manager
         self.conf = bconf
         self.name = bconf['name']
+        self._build_uuid = None
         self.workdir = workdir
         self.plugins = self._load_plugins()
         # steps must be defined after plugins
@@ -69,6 +70,14 @@ class Builder(LoggerMixin):
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         if self.remove_env:
             await self._remove_tmp_dir()
+
+    @property
+    def build_uuid(self):
+        return self._build_uuid
+
+    @build_uuid.setter
+    def build_uuid(self, value):
+        self._build_uuid = value
 
     @property
     def slave_plugin(self):
@@ -164,10 +173,16 @@ class Builder(LoggerMixin):
 
             out_fn = functools.partial(self._send_step_output_info, step_info)
 
-            step_exec_output = await step.execute(
+            fut = step.execute(
                 cwd=self._get_tmp_dir(), out_fn=out_fn,
                 last_step_status=last_step_status,
                 last_step_output=last_step_output, **envvars)
+            task = asyncio.create_task(fut)
+            type(self.manager).add_build_task(self.build_uuid, task)
+
+            step_exec_output = await task
+
+            type(self.manager).rm_build_task(self.build_uuid)
             step_info.update(step_exec_output)
             await self._flush_step_output_buff(step_info['uuid'])
 
@@ -193,6 +208,9 @@ class Builder(LoggerMixin):
                 build_status = status
 
             build_info['steps'].append(step_info)
+
+            if status == 'cancelled':
+                break
 
             if status in ['fail', 'exception'] and step.stop_on_fail:
                 break
@@ -334,6 +352,10 @@ class BuildStep:
             status = 'exception'
             output = '{} has timed out in {} seconds'.format(self.command,
                                                              self.timeout)
+
+        except asyncio.CancelledError:
+            status = 'cancelled'
+            output = 'Build cancelled'
 
         if self.warning_on_fail and status in ['fail', 'exception']:
             status = 'warning'

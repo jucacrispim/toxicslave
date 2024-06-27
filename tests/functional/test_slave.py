@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2015-2017 Juca Crispim <juca@poraodojuca.net>
+# Copyright 2015-2017, 2024 Juca Crispim <juca@poraodojuca.dev>
 
 # This file is part of toxicbuild.
 
@@ -17,10 +17,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with toxicbuild. If not, see <http://www.gnu.org/licenses/>.
 
+import asyncio
+from uuid import uuid4
+
 from toxiccore import BaseToxicClient
 from toxicslave import settings
 from tests import async_test
 from tests.functional import REPO_DIR, BaseFunctionalTest
+
+BUILD_UUID = str(uuid4())
 
 
 class DummyBuildClient(BaseToxicClient):
@@ -29,6 +34,7 @@ class DummyBuildClient(BaseToxicClient):
         kwargs['use_ssl'] = True
         kwargs['validate_cert'] = False
         super().__init__(*args, **kwargs)
+        self.build_uuid = BUILD_UUID
         self.repo_url = REPO_DIR
 
     async def request2server(self, action, body):
@@ -50,6 +56,7 @@ class DummyBuildClient(BaseToxicClient):
         data = {'action': 'build',
                 'body': {'repo_url': self.repo_url,
                          'repo_id': 'repo_id',
+                         'build_uuid': self.build_uuid,
                          'branch': 'master',
                          'vcs_type': 'git',
                          'named_tree': 'master',
@@ -68,6 +75,13 @@ class DummyBuildClient(BaseToxicClient):
 
         steps, build_status = build_resp[1:-1], build_resp[-1]
         return steps, build_status
+
+    async def cancel_build(self):
+        data = {'action': 'cancel_build',
+                'body': {'build_uuid': self.build_uuid}}
+
+        r = await self.request2server(data['action'], data['body'])
+        return r['body']['cancelled']
 
     async def build_output_info(self, builder_name):
         data = {'action': 'build',
@@ -140,6 +154,20 @@ class SlaveTest(BaseFunctionalTest):
         self.assertEqual(len(step_info), 2)
         self.assertEqual(build_status['body']['total_steps'], 1)
         self.assertEqual(build_status['body']['status'], 'success')
+
+    @async_test
+    async def test_cancel_build(self):
+
+        async def cancel():
+            await asyncio.sleep(0.5)
+            with (await get_dummy_client()) as client:
+                await client.cancel_build()
+
+        asyncio.create_task(cancel())
+        with (await get_dummy_client()) as client:
+            step_info, build_status = await client.build('builder-3')
+
+        self.assertEqual(build_status['body']['status'], 'cancelled')
 
     @async_test
     async def test_build_with_plugin(self):

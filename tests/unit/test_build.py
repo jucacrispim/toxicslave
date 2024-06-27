@@ -113,6 +113,22 @@ class BuilderTest(TestCase):
         self.assertEqual(build_info['status'], 'exception')
         self.assertEqual(len(build_info['steps']), 2)
 
+    @mock.patch.object(build, 'exec_cmd', AsyncMock(
+        side_effect=asyncio.CancelledError))
+    @async_test
+    async def test_build_cancelled(self):
+        s1 = build.BuildStep(name='s1', command='ls')
+        self.builder.steps = [s1]
+        self.builder._copy_workdir = AsyncMock(
+            spec=self.builder._copy_workdir)
+
+        self.builder._remove_tmp_dir = AsyncMock()
+        self.builder._get_tmp_dir = mock.Mock(return_value='.')
+
+        build_info = await self.builder.build()
+        self.assertEqual(build_info['status'], 'cancelled')
+        self.assertEqual(len(build_info['steps']), 1)
+
     @async_test
     async def test_send_step_output_info_step_index(self):
         step_info = {'uuid': 'some-uuid'}
@@ -294,3 +310,18 @@ class BuildStepTest(TestCase):
         status = await step.execute(cwd='.')
         self.assertEqual(status['status'], 'warning')
         await asyncio.sleep(1)
+
+    @async_test
+    async def test_step_cancelled(self):
+        step = build.BuildStep(name='test', command='sleep 1',
+                               warning_on_fail=True)
+        t = asyncio.create_task(step.execute(cwd='.'))
+
+        async def cancel():
+            await asyncio.sleep(0.5)
+            t.cancel()
+
+        asyncio.create_task(cancel())
+
+        status = await t
+        self.assertEqual(status['status'], 'cancelled')

@@ -46,6 +46,8 @@ class BuildManager(LoggerMixin):
     # key is repo_url and value is named_tree
     building_repos = defaultdict(lambda: None)  # pragma no branch WTF??
 
+    _build_tasks = defaultdict(lambda: None)  # pragma no branch
+
     def __init__(self, protocol, repo_id, repo_url, vcs_type, branch,
                  named_tree, config_type='yml',
                  config_filename='toxicbuild.yml', builders_from=None):
@@ -84,6 +86,27 @@ class BuildManager(LoggerMixin):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.current_build = None
+
+    @classmethod
+    def add_build_task(cls, build_uuid, task):
+        cls._build_tasks[build_uuid] = task
+
+    @classmethod
+    def get_build_task(cls, build_uuid):
+        return cls._build_tasks.get(build_uuid)
+
+    @classmethod
+    def rm_build_task(cls, build_uuid):
+        cls._build_tasks.pop(build_uuid, None)
+
+    @classmethod
+    def cancel_build(cls, build_uuid):
+        t = cls.get_build_task(build_uuid)
+        if not t:
+            return False
+
+        t.cancel()
+        return True
 
     @property
     def config(self):
@@ -193,7 +216,7 @@ class BuildManager(LoggerMixin):
                 # change it before trying fetch/checkout stuff
                 await self.vcs.try_set_remote(self.repo_url)
 
-            # first we try to checkout to the named_tree because if if
+            # first we try to checkout to the named_tree because if it
             # already exists here we don't need to update the code.
             try:
                 self.log('checking out to named_tree {}'.format(

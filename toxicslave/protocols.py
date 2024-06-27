@@ -61,6 +61,9 @@ class BuildServerProtocol(BaseToxicProtocol):
                 build_info = await self.build()
 
                 await self.send_response(code=0, body=build_info)
+            elif self.action == 'cancel_build':
+                await self.cancel_build()
+
             else:
                 msg = 'Action {} does not exist'.format(self.action)
                 self.log(msg, level='error')
@@ -123,6 +126,7 @@ class BuildServerProtocol(BaseToxicProtocol):
 
             try:
                 builder = await manager.load_builder(builder_name, envvars)
+                builder.build_uuid = self.data['body'].get('build_uuid')
             except BadBuilderConfig:
                 build_info = {'steps': [], 'status': 'exception',
                               'started': datetime2string(now()),
@@ -156,6 +160,13 @@ class BuildServerProtocol(BaseToxicProtocol):
                                builders_from=builders_from)
 
         return manager
+
+    async def cancel_build(self):
+        build_uuid = self.data['body']['build_uuid']
+        r = BuildManager.cancel_build(build_uuid)
+        msg = {'cancel_build': r}
+
+        await self.send_response(code=0, body=msg)
 
     def log(self, msg, level='info'):
         log('[{}] {} '.format(type(self).__name__, msg), level)

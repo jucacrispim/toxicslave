@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2015-2019, 2023 Juca Crispim <juca@poraodojuca.net>
+# Copyright 2015-2019, 2023, 2024 Juca Crispim <juca@poraodojuca.dev>
 
 # This file is part of toxicbuild.
 
@@ -390,3 +390,24 @@ class BuilderManagerTest(TestCase):
         self.manager.config_type = 'yaml'
         await self.manager.load_config()
         self.assertTrue(managers.get_toxicbuildconf_yaml.called)
+
+    @async_test
+    async def test_cancel_build(self):
+        t = Mock()
+        build_uuid = 'some-uuid'
+        managers.BuildManager.add_build_task(build_uuid, t)
+        r = managers.BuildManager.cancel_build(build_uuid)
+
+        assert r is True
+        assert t.cancel.called
+
+        managers.BuildManager.rm_build_task(build_uuid)
+
+    @async_test
+    async def test_cancel_build_dont_exist(self):
+        build_uuid = 'some-uuid'
+        r = managers.BuildManager.cancel_build(build_uuid)
+
+        assert r is False
+
+        managers.BuildManager.rm_build_task(build_uuid)

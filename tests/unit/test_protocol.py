@@ -20,7 +20,7 @@
 import asyncio
 from unittest import mock, TestCase
 from unittest.mock import AsyncMock
-from toxicslave import protocols
+from toxicslave import protocols, build
 from tests import async_test
 
 
@@ -225,12 +225,25 @@ class ProtocolTest(TestCase):
         self.assertEqual(self.response['body'], 'I\'m alive!')
 
     @mock.patch.object(protocols, 'settings', mock.Mock())
-    @mock.patch.object(protocols, 'BuildManager',
-                       mock.MagicMock(spec=protocols.BuildManager))
+    @mock.patch.object(protocols.BuildManager, 'load_config',
+                       AsyncMock())
+    @mock.patch.object(protocols.BuildManager, 'load_builder',
+                       AsyncMock())
+    @mock.patch.object(protocols.BuildManager, 'update_and_checkout',
+                       AsyncMock())
     @async_test
     async def test_client_connected_build(self):
         protocols.settings.USE_DOCKER = False
-        manager = protocols.BuildManager.return_value
+        manager = protocols.BuildManager(
+            mock.Mock(), 'repo-id', 'git@repo.git',
+            'git', 'master', 'v0.1')
+
+        builder = build.Builder(manager, {'name': 'builder1',
+                                          'steps': []}, '.')
+        builder.build = AsyncMock()
+
+        protocols.BuildManager.load_builder.return_value = builder
+
         self.message = {'action': 'build',
                         'token': '123',
                         'body': {
@@ -240,14 +253,23 @@ class ProtocolTest(TestCase):
                             'named_tree': 'v0.1',
                             'vcs_type': 'git',
                             'builder_name': 'bla'}}
-        manager.load_config = AsyncMock()
-        manager.current_build = None
-        manager.load_builder = AsyncMock()
-        manager.update_and_checkout = AsyncMock()
         self.protocol.connection_made(self.transport)
         await self._wait_futures()
-        builder = manager.load_builder.return_value
+        builder = protocols.BuildManager.load_builder.return_value
         self.assertTrue(builder.build.called)
+
+    @async_test
+    async def test_cancel_build(self):
+        task = mock.Mock()
+        build_uuid = 'something'
+        protocols.BuildManager.add_build_task(build_uuid, task)
+        self.message = {'action': 'cancel_build',
+                        'token': '123',
+                        'body': {'build_uuid': build_uuid}}
+        self.protocol.connection_made(self.transport)
+        await self._wait_futures()
+
+        assert task.cancel.called
 
     @mock.patch.object(protocols, 'log', mock.Mock())
     @async_test
