@@ -2,6 +2,10 @@ Changelog
 =========
 
 
+* v0.13.0
+
+  - Add cancel build
+
 * v0.12.1
 
   - Update toxiccore to rebase when pulling changes from remote repo

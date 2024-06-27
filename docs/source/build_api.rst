@@ -6,6 +6,7 @@ and has two known actions:
 
 - ``healthcheck`` - Get no params an simply informs if the server is running.
 - ``build`` - A request for a build from a master
+- ``cancel_build`` - Cancel a running build
 
 Build params
 ------------
@@ -13,6 +14,7 @@ Build params
 The following params are mandatory to the ``build`` action:
 
 - ``repo_id`` - The repository id
+- ``build_uuid`` - A uuid to identify the build
 - ``repo_url`` - The url of the clone/update url for the repository
 - ``branch`` - The branch that triggered the build
 - ``named_tree`` - Commit/tag that triggered the build.
@@ -38,3 +40,9 @@ When a build request is sent to the slave, the connection is kept open until the
 is ended. While the connection is open, every line of the output will be sent to the
 client. When the build is finished, full information of the build will be sent to the
 client and the connection will be closed.
+
+
+Cancel build params
+-------------------
+
+- ``build_uuid`` - The uuid for the build to be cancelled
