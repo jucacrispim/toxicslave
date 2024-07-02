@@ -1,0 +1,3 @@
+recursive-include toxicslave/templates *
+
+recursive-exclude toxicslave/templates *~

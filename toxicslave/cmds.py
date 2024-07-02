@@ -192,7 +192,7 @@ def create(root_dir, no_token=False):
 
     # after that we copy the config file to the root dir
     template_fname = 'toxicslave.conf.tmpl'
-    template_dir = pkg_resources.resource_filename('toxicbuild.slave',
+    template_dir = pkg_resources.resource_filename('toxicslave',
                                                    'templates')
     template_file = os.path.join(template_dir, template_fname)
     dest_file = os.path.join(root_dir, 'toxicslave.conf')
