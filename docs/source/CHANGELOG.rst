@@ -1,6 +1,9 @@
 Changelog
 =========
 
+* v0.13.1
+
+  - Fix packaging
 
 * v0.13.0
 
