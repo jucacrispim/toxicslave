@@ -118,7 +118,13 @@ class DummyBuildClient(BaseToxicClient):
 
 async def get_dummy_client():
     dc = DummyBuildClient(settings.ADDR, settings.PORT)
-    await dc.connect()
+    while True:
+        try:
+            await dc.connect()
+        except ConnectionRefusedError:
+            await asyncio.sleep(0.2)
+        else:
+            break
     return dc
 
 
