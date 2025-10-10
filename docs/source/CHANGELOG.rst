@@ -1,6 +1,11 @@
 Changelog
 =========
 
+* v0.13.2
+
+  - Update toxiccore
+  - Remove old containers before start a new docker container
+
 * v0.13.1
 
   - Fix packaging
