@@ -2,6 +2,8 @@ language: python
 
 versions:
   - '3.11'
+  - '3.12'
+  - '3.13'
 
 extra_indexes:
   - 'https://pypi.poraodojuca.dev'
@@ -33,3 +35,36 @@ steps:
 
   - name: Upload docs
     command: ./scripts/upload_docs.sh
+
+
+builders:
+  - name: Docs & Release
+    branches:
+      - release
+
+    platform: python3.13
+
+    envvars:
+      ENV: ci
+
+    plugins:
+      - name: apt-install
+        packages:
+          - build-essential
+          - curl
+
+      - name: python-venv
+        pyversion: python3.13
+        extra_indexes:
+          - 'https://pypi.poraodojuca.dev'
+
+    steps:
+      - name: Build docs
+        command: ./scripts/build_docs.sh
+        stop_on_fail: true
+
+      - name: upload docs to pdj pypi
+        command: ./scripts/release.sh
+
+      - name: upload docs
+        command: ./scripts/upload_docs.sh

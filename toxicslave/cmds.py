@@ -19,7 +19,7 @@
 # pylint: disable-all
 
 import os
-import pkg_resources
+import importlib
 from secrets import token_urlsafe
 import shutil
 import sys
@@ -192,8 +192,8 @@ def create(root_dir, no_token=False):
 
     # after that we copy the config file to the root dir
     template_fname = 'toxicslave.conf.tmpl'
-    template_dir = pkg_resources.resource_filename('toxicslave',
-                                                   'templates')
+    template_dir = str(importlib.resources.files(
+        'toxicslave').joinpath('templates'))
     template_file = os.path.join(template_dir, template_fname)
     dest_file = os.path.join(root_dir, 'toxicslave.conf')
     shutil.copyfile(template_file, dest_file)
