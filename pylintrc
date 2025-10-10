@@ -16,7 +16,7 @@ persistent=no
 
 # List of plugins (as comma separated values of python modules names) to load,
 # usually to register additional checkers.
-load-plugins=pylint_mongoengine
+# load-plugins=pylint_mongoengine
 
 # Use multiple processes to speed up Pylint.
 # DO NOT CHANGE THIS VALUES >1 HIDE RESULTS!!!!!
@@ -31,13 +31,6 @@ unsafe-load-any-extension=no
 # run arbitrary code
 extension-pkg-whitelist=
 
-# Allow optimization of some AST trees. This will activate a peephole AST
-# optimizer, which will apply various small optimizations. For instance, it can
-# be used to obtain the result of joining multiple strings with the addition
-# operator. Joining a lot of strings can lead to a maximum recursion error in
-# Pylint and this flag can prevent that. It has one side effect, the resulting
-# AST will be different than the one from reality.
-optimize-ast=yes
 
 
 [MESSAGES CONTROL]
@@ -56,7 +49,6 @@ enable=import-error,
        reimported,
        wildcard-import,
        misplaced-future,
-       relative-import,
        deprecated-module,
        unpacking-non-sequence,
        invalid-all-object,
@@ -65,7 +57,6 @@ enable=import-error,
        cell-var-from-loop,
        global-variable-undefined,
        redefined-builtin,
-       redefine-in-handler,
        unused-import,
        unused-wildcard-import,
        global-variable-not-assigned,
@@ -107,14 +98,8 @@ enable=import-error,
        unreachable,
        eval-used,
        exec-used,
-       bad-builtin,
        using-constant-test,
-       deprecated-lambda,
        bad-super-call,
-       missing-super-argument,
-       slots-on-old-class,
-       super-on-old-class,
-       property-on-old-class,
        not-an-iterable,
        not-a-mapping,
        format-needs-mapping,
@@ -134,26 +119,8 @@ enable=import-error,
        unused-format-string-key,
        invalid-format-index,
        bad-indentation,
-       mixed-indentation,
        unnecessary-semicolon,
-       lowercase-l-suffix,
        fixme,
-       invalid-encoded-data,
-       unpacking-in-except,
-       import-star-module-level,
-       parameter-unpacking,
-       long-suffix,
-       old-octal-literal,
-       old-ne-operator,
-       backtick,
-       old-raise-syntax,
-       print-statement,
-       metaclass-assignment,
-       next-method-called,
-       dict-iter-method,
-       dict-view-method,
-       indexing-exception,
-       raising-string,
        logging-format-truncated,
        logging-too-few-args,
        logging-too-many-args,
@@ -191,7 +158,6 @@ enable=import-error,
        unexpected-special-method-signature,
        non-iterator-returned,
        attribute-defined-outside-init,
-       no-init,
        signature-differs,
        bad-staticmethod-argument,
        non-parent-init-called,
@@ -204,7 +170,6 @@ enable=import-error,
        raising-non-exception,
        misplaced-bare-raise,
        duplicate-except,
-       nonstandard-exception,
        binary-op-exception,
        bare-except,
        not-async-context-manager,
@@ -240,10 +205,6 @@ enable=import-error,
 # mypackage.mymodule.MyReporterClass.
 output-format=parseable
 
-# Put messages in a separate file for each module / package specified on the
-# command line instead of printing them on stdout. Reports (if any) will be
-# written in a file name "pylint_global.[txt|html]".
-files-output=no
 
 # Tells whether to display a full report or only the messages
 reports=no
@@ -279,11 +240,6 @@ ignore-long-lines=^\s*(# )?<?https?://\S+>?$
 # else.
 single-line-if-stmt=no
 
-# List of optional constructs for which whitespace checking is disabled. `dict-
-# separator` is used to allow tabulation in dicts, etc.: {1  : 1,\n222: 2}.
-# `trailing-comma` allows a space between comma and closing bracket: (a, ).
-# `empty-line` allows space-only lines.
-no-space-check=trailing-comma,dict-separator
 
 # Maximum number of lines in a module
 max-module-lines=1000
@@ -384,8 +340,6 @@ notes=FIXME,XXX,TODO
 
 [BASIC]
 
-# List of builtins function names that should not be used, separated by a comma
-bad-functions=map,filter,input
 
 # Good variable names which should always be accepted, separated by a comma
 good-names=i,j,k,ex,Run,_
@@ -403,62 +357,35 @@ include-naming-hint=no
 # Regular expression matching correct function names
 function-rgx=[a-z_][a-z0-9_]{2,30}$
 
-# Naming hint for function names
-function-name-hint=[a-z_][a-z0-9_]{2,30}$
 
 # Regular expression matching correct variable names
 variable-rgx=[a-z_][a-z0-9_]{2,30}$
 
-# Naming hint for variable names
-variable-name-hint=[a-z_][a-z0-9_]{2,30}$
-
 # Regular expression matching correct constant names
 const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__))$
-
-# Naming hint for constant names
-const-name-hint=(([A-Z_][A-Z0-9_]*)|(__.*__))$
 
 # Regular expression matching correct attribute names
 attr-rgx=[a-z_][a-z0-9_]{2,30}$
 
-# Naming hint for attribute names
-attr-name-hint=[a-z_][a-z0-9_]{2,30}$
-
 # Regular expression matching correct argument names
 argument-rgx=[a-z_][a-z0-9_]{2,30}$
 
-# Naming hint for argument names
-argument-name-hint=[a-z_][a-z0-9_]{2,30}$
 
 # Regular expression matching correct class attribute names
 class-attribute-rgx=([A-Za-z_][A-Za-z0-9_]{2,30}|(__.*__))$
 
-# Naming hint for class attribute names
-class-attribute-name-hint=([A-Za-z_][A-Za-z0-9_]{2,30}|(__.*__))$
-
 # Regular expression matching correct inline iteration names
 inlinevar-rgx=[A-Za-z_][A-Za-z0-9_]*$
-
-# Naming hint for inline iteration names
-inlinevar-name-hint=[A-Za-z_][A-Za-z0-9_]*$
 
 # Regular expression matching correct class names
 class-rgx=[A-Z_][a-zA-Z0-9]+$
 
-# Naming hint for class names
-class-name-hint=[A-Z_][a-zA-Z0-9]+$
-
 # Regular expression matching correct module names
 module-rgx=(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
-
-# Naming hint for module names
-module-name-hint=(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
 
 # Regular expression matching correct method names
 method-rgx=[a-z_][a-z0-9_]{2,30}$
 
-# Naming hint for method names
-method-name-hint=[a-z_][a-z0-9_]{2,30}$
 
 # Regular expression which should only match function or class names that do
 # not require a docstring.
