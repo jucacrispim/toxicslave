@@ -8,6 +8,12 @@ versions:
 extra_indexes:
   - 'https://pypi.poraodojuca.dev'
 
+branches:
+  - master
+  - bug-*
+  - feature-*
+  - refactor-*
+
 system_packages:
   - procps
   - make
