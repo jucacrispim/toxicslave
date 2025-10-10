@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2017, 2019, 2023 Juca Crispim <juca@poraodojuca.net>
+# Copyright 2017, 2019, 2023, 2025 Juca Crispim <juca@poraodojuca.net>
 
 # This file is part of toxicbuild.
 
@@ -219,9 +219,27 @@ class DockerContainerBuilderManagerTest(TestCase):
 
     @patch.object(docker, 'exec_cmd', AsyncMock())
     @async_test
+    async def test_start_container_already_exists_should_remove(self):
+        self.container.wait_start = AsyncMock()
+        self.container.container_exists = AsyncMock(return_value=True)
+        self.container.rm_container = AsyncMock(
+            spec=self.container.rm_from_container)
+        self.container.remove_env = True
+        expected = 'docker run -d -t   --name {} my-image'.format(
+            self.container.cname)
+        await self.container.start_container()
+        called = docker.exec_cmd.call_args[0][0]
+
+        self.assertEqual(expected, called)
+        self.assertTrue(self.container.wait_start.called)
+        self.assertTrue(self.container.rm_container.called)
+
+    @patch.object(docker, 'exec_cmd', AsyncMock())
+    @async_test
     async def test_start_container(self):
         self.container.container_exists = AsyncMock(return_value=True)
         self.container.wait_start = AsyncMock()
+        self.container.remove_env = False
         expected = 'docker start {}'.format(self.container.cname)
         await self.container.start_container()
         called = docker.exec_cmd.call_args[0][0]

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2023 Juca Crispim <juca@poraodojuca.net>
+# Copyright 2023, 2025 Juca Crispim <juca@poraodojuca.net>
 
 # This file is part of toxicbuild.
 

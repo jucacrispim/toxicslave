@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2017, 2019 Juca Crispim <juca@poraodojuca.net>
+# Copyright 2017, 2019, 2025 Juca Crispim <juca@poraodojuca.net>
 
 # This file is part of toxicbuild.
 
@@ -188,6 +188,13 @@ class DockerContainerBuilder(Builder):
 
     async def start_container(self):
         exists = await self.container_exists()
+        if exists and self.remove_env:
+            # In case the slave host died before the build was complete
+            # a old docker container may still exist, so we delete it
+            # here and create a new one:
+            await self.rm_container()
+            exists = False
+
         self.log('Starting container {}'.format(self.cname),
                  level='debug')
 
