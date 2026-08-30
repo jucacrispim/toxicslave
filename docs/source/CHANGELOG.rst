@@ -1,6 +1,10 @@
 Changelog
 =========
 
+* v0.13.3
+
+  - Update toxiccore
+
 * v0.13.2
 
   - Update toxiccore
