@@ -1,6 +1,11 @@
 Changelog
 =========
 
+* v0.13.5
+
+  - Fix missing ``importlib.resources`` import that broke ``create`` on a
+    fresh virtualenv
+
 * v0.13.4
 
   - Print token with a stable marker
