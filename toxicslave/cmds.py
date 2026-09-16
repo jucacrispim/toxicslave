@@ -19,7 +19,7 @@
 # pylint: disable-all
 
 import os
-import importlib
+import importlib.resources
 from secrets import token_urlsafe
 import shutil
 import sys
