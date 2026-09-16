@@ -175,6 +175,7 @@ def create_token(conffile, show_encrypted=False):
     if show_encrypted:
         print('Created encrypted token:{}'.format(encrypted_token))
     print('Created access token:{}'.format(access_token))
+    print('TOKEN:{}'.format(access_token))
     return access_token
 
 
